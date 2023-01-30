@@ -37,6 +37,8 @@ func GetCocktail(db *sqlx.DB, id int) CocktailResponse {
 	err := db.Get(&result.Cocktail, "SELECT * FROM cocktails WHERE id = $1", id)
 	if err != nil {
 		result.Error = err.Error()
+	} else {
+		result.Success = true
 	}
 
 	return result
@@ -59,10 +61,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Инициализация переменных окружения
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("error loading .env: %s", err)
-	}
+	godotenv.Load()
 
 	// Подключение к БД
 	fmt.Println("Connecting to DB ...")
