@@ -19,13 +19,13 @@ type CocktailResponse struct {
 }
 
 type Cocktail struct {
-	Id            int    `json:"id" db:"id"`
-	Name          string `json:"name" binding:"required"`
-	Alcoholic     string `json:"alcoholic" binding:"required"`
-	Ice           string `json:"ice" binding:"required"`
-	Flavor        string `json:"flavor" binding:"required"`
-	Price         int    `json:"price" binding:"required"`
-	PrimaryType   string `json:"primary_type" binding:"required"`
-	SecondaryType string `json:"secondary_type" binding:"required"`
+	Id             int    `json:"id" db:"id"`
+	Name           string `json:"name" binding:"required"`
+	Alcoholic      string `json:"alcoholic" binding:"required"`
+	Ice            string `json:"ice" binding:"required"`
+	Flavor         string `json:"flavor" binding:"required"`
+	Price          int    `json:"price" binding:"required"`
+	Primary_Type   string `json:"primary_type" binding:"required"`
+	Secondary_Type string `json:"secondary_type" binding:"required"`
 }
 
