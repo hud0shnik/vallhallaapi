@@ -29,3 +29,17 @@ type Cocktail struct {
 	Secondary_Type string `json:"secondary_type" binding:"required"`
 }
 
+// Функция получения информации о коктейле
+func GetCocktail(db *sqlx.DB, id int) CocktailResponse {
+
+	var result CocktailResponse
+
+	err := db.Get(&result.Cocktail, "SELECT * FROM cocktails WHERE id = $1", id)
+	if err != nil {
+		result.Error = err.Error()
+	}
+
+	return result
+
+}
+
