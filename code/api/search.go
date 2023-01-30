@@ -10,14 +10,17 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
+// Структура респонса
 type CocktailResponse struct {
 	Success  bool     `json:"success"`
 	Error    string   `json:"error"`
 	Cocktail Cocktail `json:"cocktail"`
 }
 
+// Структура коктейля
 type Cocktail struct {
 	Id             int    `json:"id" db:"id"`
 	Name           string `json:"name" binding:"required"`
@@ -32,8 +35,10 @@ type Cocktail struct {
 // Функция получения информации о коктейле
 func GetCocktail(db *sqlx.DB, id int) CocktailResponse {
 
+	// Инициализация результата
 	var result CocktailResponse
 
+	// Получение данных и проверка респонса
 	err := db.Get(&result.Cocktail, "SELECT * FROM cocktails WHERE id = $1", id)
 	if err != nil {
 		result.Error = err.Error()
@@ -41,6 +46,7 @@ func GetCocktail(db *sqlx.DB, id int) CocktailResponse {
 		result.Success = true
 	}
 
+	// Вывод результата
 	return result
 
 }
