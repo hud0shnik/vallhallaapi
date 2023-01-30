@@ -23,7 +23,7 @@ type CocktailResponse struct {
 
 // Структура коктейля
 type Cocktail struct {
-	//Id             int    `json:"id" db:"id"`
+	//Id           int    `json:"id" db:"id"`
 	Name           string `json:"name"`
 	Alcoholic      string `json:"alcoholic"`
 	Ice            string `json:"ice"`
@@ -37,46 +37,44 @@ type Cocktail struct {
 // Функция получения информации о коктейле
 func GetCocktail(db *sqlx.DB, values url.Values) CocktailResponse {
 
+	// Начало запроса и слайс параметров
 	query := "SELECT name, price, alcoholic, ice, flavor, primary_type, secondary_type, recept FROM cocktails"
 	parameters := []string{}
 
-	if values.Has("ice") {
-		parameters = append(parameters, "ice = '"+values.Get("ice")+"'")
-	}
+	// Проверки на наличие параметров и запись их в слайс
 
 	if values.Has("name") {
-		parameters = append(parameters, "name = '"+values.Get("name")+"'")
+		parameters = append(parameters, "name = '"+strings.Title(values.Get("name"))+"'")
 	}
-
 	if values.Has("price") {
 		parameters = append(parameters, "price = "+values.Get("price"))
 	}
-
 	if values.Has("alcoholic") {
-		parameters = append(parameters, "alcoholic = '"+values.Get("alcoholic")+"'")
+		parameters = append(parameters, "alcoholic = '"+strings.Title(values.Get("alcoholic"))+"'")
 	}
-
+	if values.Has("ice") {
+		parameters = append(parameters, "ice = '"+strings.Title(values.Get("ice"))+"'")
+	}
 	if values.Has("flavor") {
-		parameters = append(parameters, "flavor = '"+values.Get("flavor")+"'")
+		parameters = append(parameters, "flavor = '"+strings.Title(values.Get("flavor"))+"'")
 	}
-
 	if values.Has("primary_type") {
-		parameters = append(parameters, "primary_type = '"+values.Get("primary_type")+"'")
+		parameters = append(parameters, "primary_type = '"+strings.Title(values.Get("primary_type"))+"'")
 	}
-
 	if values.Has("secondary_type") {
-		parameters = append(parameters, "secondary_type = '"+values.Get("secondary_type")+"'")
+		parameters = append(parameters, "secondary_type = '"+strings.Title(values.Get("secondary_type"))+"'")
 	}
 
+	// Если есть параметры, передача их в запрос
 	if len(parameters) > 0 {
-		query += " WHERE " + strings.ReplaceAll(strings.ReplaceAll(strings.Join(parameters, " AND "), "no", "No"), "yes", "Yes")
+		query += " WHERE " + strings.Join(parameters, " AND ")
 	}
 
 	// Инициализация результата
 	var result CocktailResponse
 
 	// Получение и проверка данных
-	err := db.Select(&result.Cocktails, query)
+	err := db.Select(&result.Cocktails, query+" ORDER BY price DESC")
 	if err != nil {
 		result.Error = err.Error()
 	} else if len(result.Cocktails) == 0 {

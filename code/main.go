@@ -9,9 +9,9 @@ import (
 	api "vallhallaapi/api"
 
 	"github.com/gorilla/mux"
-	_ "github.com/lib/pq"
 )
 
+// Функция для ручного запуска на 127.0.0.1
 func main() {
 
 	// Вывод времени начала работы
