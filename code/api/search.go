@@ -44,7 +44,7 @@ func GetCocktail(db *sqlx.DB, values url.Values) CocktailResponse {
 	// Проверки на наличие параметров и запись их в слайс
 
 	if values.Has("name") {
-		parameters = append(parameters, "name = '"+strings.Title(values.Get("name"))+"'")
+		parameters = append(parameters, "name LIKE '%"+strings.Title(values.Get("name"))+"%' OR name LIKE '%"+values.Get("name")+"%'")
 	}
 	if values.Has("price") {
 		parameters = append(parameters, "price = "+values.Get("price"))
