@@ -15,34 +15,33 @@ import (
 )
 
 // Структура респонса
-type CocktailResponse struct {
-	Success   bool       `json:"success"`
-	Error     string     `json:"error"`
-	Cocktails []Cocktail `json:"cocktail"`
+type Response struct {
+	Success bool    `json:"success"`
+	Error   string  `json:"error"`
+	Drinks  []Drink `json:"result"`
 }
 
 // Структура коктейля
-type Cocktail struct {
+type Drink struct {
 	//Id           int    `json:"id" db:"id"`
 	Name           string `json:"name"`
 	Alcoholic      string `json:"alcoholic"`
 	Ice            string `json:"ice"`
-	Flavor         string `json:"flavor"`
+	Flavour        string `json:"flavour"`
 	Price          int    `json:"price"`
 	Primary_Type   string `json:"primary_type"`
 	Secondary_Type string `json:"secondary_type"`
-	Recept         string `json:"recept"`
+	Recipe         string `json:"recipe"`
 }
 
 // Функция получения информации о коктейле
-func GetCocktail(db *sqlx.DB, values url.Values) CocktailResponse {
+func GetDrink(db *sqlx.DB, values url.Values) Response {
 
 	// Начало запроса и слайс параметров
-	query := "SELECT name, price, alcoholic, ice, flavor, primary_type, secondary_type, recept FROM cocktails"
+	query := "SELECT name, price, alcoholic, ice, flavour, primary_type, secondary_type, recipe FROM drinks"
 	parameters := []string{}
 
 	// Проверки на наличие параметров и запись их в слайс
-
 	if values.Has("name") {
 		parameters = append(parameters, "name LIKE '%"+strings.Title(values.Get("name"))+"%' OR name LIKE '%"+values.Get("name")+"%'")
 	}
@@ -55,14 +54,17 @@ func GetCocktail(db *sqlx.DB, values url.Values) CocktailResponse {
 	if values.Has("ice") {
 		parameters = append(parameters, "ice = '"+strings.Title(values.Get("ice"))+"'")
 	}
-	if values.Has("flavor") {
-		parameters = append(parameters, "flavor = '"+strings.Title(values.Get("flavor"))+"'")
+	if values.Has("flavour") {
+		parameters = append(parameters, "flavour = '"+strings.Title(values.Get("flavour"))+"'")
 	}
 	if values.Has("primary_type") {
 		parameters = append(parameters, "primary_type = '"+strings.Title(values.Get("primary_type"))+"'")
 	}
 	if values.Has("secondary_type") {
 		parameters = append(parameters, "secondary_type = '"+strings.Title(values.Get("secondary_type"))+"'")
+	}
+	if values.Has("recipe") {
+		parameters = append(parameters, "recipe LIKE '%"+strings.Title(values.Get("recipe"))+"%' OR recipe LIKE '%"+values.Get("recipe")+"%'")
 	}
 
 	// Если есть параметры, передача их в запрос
@@ -71,14 +73,14 @@ func GetCocktail(db *sqlx.DB, values url.Values) CocktailResponse {
 	}
 
 	// Инициализация результата
-	var result CocktailResponse
+	var result Response
 
 	// Получение и проверка данных
-	err := db.Select(&result.Cocktails, query+" ORDER BY price DESC")
+	err := db.Select(&result.Drinks, query+" ORDER BY price DESC")
 	if err != nil {
 		result.Error = err.Error()
-	} else if len(result.Cocktails) == 0 {
-		result.Error = "Cocktails not found"
+	} else if len(result.Drinks) == 0 {
+		result.Error = "not found"
 	} else {
 		result.Success = true
 	}
@@ -100,13 +102,12 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	// Подключение к БД
 	fmt.Println("Connecting to DB ...")
 	db, err := sqlx.Open("postgres",
-		fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
+		fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
 			os.Getenv("DB_HOST"),
 			os.Getenv("DB_PORT"),
 			os.Getenv("DB_USERNAME"),
 			os.Getenv("DB_NAME"),
-			os.Getenv("DB_PASSWORD"),
-			"disable"))
+			os.Getenv("DB_PASSWORD")))
 	if err != nil {
 		log.Fatalf("error opening DB: %s", err)
 	}
@@ -118,9 +119,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Получение статистики, форматирование и отправка
-	jsonResp, err := json.Marshal(GetCocktail(db, r.URL.Query()))
+	jsonResp, err := json.Marshal(GetDrink(db, r.URL.Query()))
 	if err != nil {
-		fmt.Print("Error: ", err)
+		log.Fatalf("error with marshaling: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 	} else {
 		w.WriteHeader(http.StatusOK)
