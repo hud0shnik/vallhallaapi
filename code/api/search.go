@@ -25,10 +25,10 @@ type Response struct {
 type Drink struct {
 	//Id           int    `json:"id" db:"id"`
 	Name           string `json:"name"`
+	Price          int    `json:"price"`
 	Alcoholic      string `json:"alcoholic"`
 	Ice            string `json:"ice"`
 	Flavour        string `json:"flavour"`
-	Price          int    `json:"price"`
 	Primary_Type   string `json:"primary_type"`
 	Secondary_Type string `json:"secondary_type"`
 	Recipe         string `json:"recipe"`
@@ -43,7 +43,7 @@ func GetDrink(db *sqlx.DB, values url.Values) Response {
 
 	// Проверки на наличие параметров и запись их в слайс
 	if values.Has("name") {
-		parameters = append(parameters, "name LIKE '%"+strings.Title(values.Get("name"))+"%' OR name LIKE '%"+values.Get("name")+"%'")
+		parameters = append(parameters, "(name LIKE '%"+strings.Title(values.Get("name"))+"%' OR name LIKE '%"+values.Get("name")+"%')")
 	}
 	if values.Has("price") {
 		parameters = append(parameters, "price = "+values.Get("price"))
@@ -64,7 +64,7 @@ func GetDrink(db *sqlx.DB, values url.Values) Response {
 		parameters = append(parameters, "secondary_type = '"+strings.Title(values.Get("secondary_type"))+"'")
 	}
 	if values.Has("recipe") {
-		parameters = append(parameters, "recipe LIKE '%"+strings.Title(values.Get("recipe"))+"%' OR recipe LIKE '%"+values.Get("recipe")+"%'")
+		parameters = append(parameters, "(recipe LIKE '%"+strings.Title(values.Get("recipe"))+"%' OR recipe LIKE '%"+values.Get("recipe")+"%')")
 	}
 
 	// Если есть параметры, передача их в запрос
