@@ -97,3 +97,42 @@ func SearchDrinksInfo(db *sqlx.DB, values url.Values) InfoResponse {
 
 }
 
+// Роут "/info"
+func Info(w http.ResponseWriter, r *http.Request) {
+
+	// Передача в заголовок респонса типа данных
+	w.Header().Set("Content-Type", "application/json")
+
+	// Инициализация переменных окружения
+	godotenv.Load()
+
+	// Подключение к БД
+	fmt.Println("Connecting to DB ...")
+	db, err := sqlx.Open("postgres",
+		fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
+			os.Getenv("DB_HOST"),
+			os.Getenv("DB_PORT"),
+			os.Getenv("DB_USERNAME"),
+			os.Getenv("DB_NAME"),
+			os.Getenv("DB_PASSWORD")))
+	if err != nil {
+		log.Fatalf("error opening DB: %s", err)
+	}
+
+	// Проверка подключения
+	err = db.Ping()
+	if err != nil {
+		log.Fatalf("failed to ping DB: %s", err)
+	}
+
+	// Получение статистики, форматирование и отправка
+	jsonResp, err := json.Marshal(SearchDrinksInfo(db, r.URL.Query()))
+	if err != nil {
+		log.Fatalf("error with marshaling: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResp)
+	}
+
+}

@@ -23,6 +23,7 @@ func main() {
 
 	// Маршруты
 	router.HandleFunc("/api/search", api.Search).Methods("GET")
+	router.HandleFunc("/api/info", api.Info).Methods("GET")
 
 	// Запуск API
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
