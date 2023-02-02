@@ -15,7 +15,7 @@ import (
 )
 
 // Структура респонса
-type Response struct {
+type SearchResponse struct {
 	Success bool    `json:"success"`
 	Error   string  `json:"error"`
 	Drinks  []Drink `json:"result"`
@@ -31,14 +31,14 @@ type Drink struct {
 	Flavour        string `json:"flavour"`
 	Primary_Type   string `json:"primary_type"`
 	Secondary_Type string `json:"secondary_type"`
-	Recipe         string `json:"recipe"`
+	Shortcut       string `json:"shortcut"`
 }
 
 // Функция получения информации о коктейле
-func GetDrink(db *sqlx.DB, values url.Values) Response {
+func SearchDrinks(db *sqlx.DB, values url.Values) SearchResponse {
 
 	// Начало запроса и слайс параметров
-	query := "SELECT name, price, alcoholic, ice, flavour, primary_type, secondary_type, recipe FROM drinks"
+	query := "SELECT name, price, alcoholic, ice, flavour, primary_type, secondary_type, shortcut FROM drinks"
 	parameters := []string{}
 
 	// Проверки на наличие параметров и запись их в слайс
@@ -66,6 +66,9 @@ func GetDrink(db *sqlx.DB, values url.Values) Response {
 	if values.Has("recipe") {
 		parameters = append(parameters, "(recipe LIKE '%"+strings.Title(values.Get("recipe"))+"%' OR recipe LIKE '%"+values.Get("recipe")+"%')")
 	}
+	if values.Has("shortcut") {
+		parameters = append(parameters, "(shortcut LIKE '%"+strings.Title(values.Get("shortcut"))+"%' OR shortcut LIKE '%"+values.Get("shortcut")+"%')")
+	}
 
 	// Если есть параметры, передача их в запрос
 	if len(parameters) > 0 {
@@ -73,7 +76,7 @@ func GetDrink(db *sqlx.DB, values url.Values) Response {
 	}
 
 	// Инициализация результата
-	var result Response
+	var result SearchResponse
 
 	// Получение и проверка данных
 	err := db.Select(&result.Drinks, query+" ORDER BY price DESC")
@@ -119,7 +122,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Получение статистики, форматирование и отправка
-	jsonResp, err := json.Marshal(GetDrink(db, r.URL.Query()))
+	jsonResp, err := json.Marshal(SearchDrinks(db, r.URL.Query()))
 	if err != nil {
 		log.Fatalf("error with marshaling: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
