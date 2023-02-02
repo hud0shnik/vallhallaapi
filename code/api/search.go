@@ -69,6 +69,9 @@ func SearchDrinks(db *sqlx.DB, values url.Values) SearchResponse {
 	if values.Has("shortcut") {
 		parameters = append(parameters, "(shortcut LIKE '%"+strings.Title(values.Get("shortcut"))+"%' OR shortcut LIKE '%"+values.Get("shortcut")+"%')")
 	}
+	if values.Has("description") {
+		parameters = append(parameters, "(description LIKE '%"+strings.Title(values.Get("description"))+"%' OR description LIKE '%"+values.Get("description")+"%')")
+	}
 
 	// Если есть параметры, передача их в запрос
 	if len(parameters) > 0 {
@@ -83,7 +86,8 @@ func SearchDrinks(db *sqlx.DB, values url.Values) SearchResponse {
 	if err != nil {
 		result.Error = err.Error()
 	} else if len(result.Drinks) == 0 {
-		result.Error = "not found"
+		result.Success = true
+		result.Error = "drinks not found"
 	} else {
 		result.Success = true
 	}

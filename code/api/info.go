@@ -87,7 +87,8 @@ func SearchDrinksInfo(db *sqlx.DB, values url.Values) InfoResponse {
 	if err != nil {
 		result.Error = err.Error()
 	} else if len(result.Drinks) == 0 {
-		result.Error = "not found"
+		result.Success = true
+		result.Error = "drinks not found"
 	} else {
 		result.Success = true
 	}
