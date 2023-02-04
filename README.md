@@ -11,18 +11,20 @@ https://vall-halla-api.vercel.app/api/search
 Parameter       | Value type | Description   
 ----------------|------------|-------------------------------------
 name            |   string   | search by names ('%VALUE%')
-price           |     int    | search by prices (==)
+price           |    int     | search by prices (==)
 alcoholic       |   string   |
 ice             |   string   |
 flavour         |   string   | search by flavours (==)
 primary_type    |   string   | search by primary types ('%VALUE%')
 secondary_type  |   string   | search by secondary types ('%VALUE%')
+shortcut        |   string   | search by shortcuts ('%VALUE%')
 recipe          |   string   | search by recipes ('%VALUE%')
+description     |   string   | search by descriptions ('%VALUE%')
 
 <p>For example, </br>"https://vall-halla-api.vercel.app/api/search?alcoholic=no&flavour=spicy" - all non-alcoholic spicy drinks,</br>
 "https://vall-halla-api.vercel.app/api/search?name=piano" - "Piano Man" and "Piano Woman" recieps,</br>
 "https://vall-halla-api.vercel.app/api/search?recipe=aged" - all aged drinks,</br>
-"https://vall-halla-api.vercel.app/api/search?primary_type=promo&recipe=3xT" - all promo drinks with 3 Karmotrine</p>   
+"https://vall-halla-api.vercel.app/api/search?primary_type=promo&shortcut=3xT" - all promo drinks with 3 Karmotrine</p>   
 
 <h2>Structures</h2>
 
@@ -43,30 +45,38 @@ name                        |      string        |
 price                       |       int          |
 alcoholic                   |      string        | "Yes", "No" or "Optional"
 ice                         |      string        | "Yes" or "No"
-flavour                     |      string        |
+flavour                     |      string        | may be "N/A"
 primary_type                |      string        |
-secondary_type              |      string        |  may be ""
-recipe                      |      string        |  also may be ""
+secondary_type              |      string        |
+shortcut                    |      string        | also may be "N/A"
 
 
 <h2>Types</h2>
 
 Type                     |                                    Values       
 -------------------------|------------------------------------------------------------------------
-primary_type             |"Bottled", "Classic", "Classy", "Girly", "Manly" or "Promo"
-secondary_Type           | "", "Bland", "Burning", "Happy", "Sobering", "Soft", "Strong" or "Vintage"
+primary_type             | "Bottled", "Classic", "Classy", "Girly", "Manly" or "Promo"
+secondary_Type           | "Bland", "Burning", "Happy", "N/A", "Sobering", "Soft", "Strong" or "Vintage"
 
 
-<h2>Recipe</h2>
+<h2>Shortcuts</h2>
 
-Shortcuts   |    Add one   
+Shortcuts   |    Action   
 ------------|-------------------- 
-Q           | Adelhyde
-W           | Bronson Extract
-E           | Powdered Delta
-R           | Flanergide
-T           | Karmotrine (alcoholic component)
+Q           | Add one Adelhyde
+W           | Add one Bronson Extract
+E           | Add one Powdered Delta
+R           | Add one Flanergide
+T           | Add one Karmotrine (alcoholic component)
+A           | Toggle ice
+S           | Toggle aging
 
-<p>For example, "2xQ, 3xW, 5xE, 5xR, 3xT" means "2 Adelhyde, 3 Bronson Extract, 5 Powdered Delta, 5 Flanergide and 3 Karmotrine" </p>
+<p> For example, <i>"2xQ, 3xW, 5xE, 5xR, 3xT, A, all mixed."</i> means <i>"2 Adelhyde, 3 Bronson Extract, 5 Powdered Delta, 5 Flanergide and 3 Karmotrine, all on the rocks and mixed."</i></p>
+
+You can also use route <b>"/info"</b> instead of <b>"/search"</b> to get more information about drink (with description and full recipe). Parameters are the same.
 
 
+
+<img src="https://wakatime.com/badge/user/ee2709af-fc5f-498b-aaa1-3ea47bf12a00/project/ca6a9f63-8582-4243-905e-900ec35cede8.svg?style=for-the-badge">
+
+[![License - BSD 3-Clause](https://img.shields.io/static/v1?label=License&message=BSD+3-Clause&color=%239a68af&style=for-the-badge)](/LICENSE)
