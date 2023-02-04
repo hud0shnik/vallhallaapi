@@ -57,11 +57,8 @@ func SearchDrinks(db *sqlx.DB, values url.Values) SearchResponse {
 	if values.Has("flavour") {
 		parameters = append(parameters, "flavour = '"+strings.Title(values.Get("flavour"))+"'")
 	}
-	if values.Has("primary_type") {
-		parameters = append(parameters, "primary_type = '"+strings.Title(values.Get("primary_type"))+"'")
-	}
-	if values.Has("secondary_type") {
-		parameters = append(parameters, "secondary_type = '"+strings.Title(values.Get("secondary_type"))+"'")
+	if values.Has("type") {
+		parameters = append(parameters, "(primary_type = '"+strings.Title(values.Get("type"))+"' OR secondary_type = '"+strings.Title(values.Get("type"))+"')")
 	}
 	if values.Has("recipe") {
 		parameters = append(parameters, "(recipe LIKE '%"+strings.Title(values.Get("recipe"))+"%' OR recipe LIKE '%"+values.Get("recipe")+"%')")
