@@ -2,7 +2,7 @@
 
 <i>Valhalla-api</i> provides fast access to the database of drink recipes from the game <b>"VA-11 Hall-A: Cyberpunk Bartender Action"</b>
 
-<h4>Request sample </h4>
+<h4>Request sample</h4>
   
 ``` Elixir
 https://vall-halla-api.vercel.app/api/search
@@ -15,8 +15,7 @@ price           |    int     | search by prices (==)
 alcoholic       |   string   |
 ice             |   string   |
 flavour         |   string   | search by flavours (==)
-primary_type    |   string   | search by primary types ('%VALUE%')
-secondary_type  |   string   | search by secondary types ('%VALUE%')
+type            |   string   | search by types ('%VALUE%')
 shortcut        |   string   | search by shortcuts ('%VALUE%')
 recipe          |   string   | search by recipes ('%VALUE%')
 description     |   string   | search by descriptions ('%VALUE%')
@@ -24,7 +23,7 @@ description     |   string   | search by descriptions ('%VALUE%')
 <p>For example, </br>"https://vall-halla-api.vercel.app/api/search?alcoholic=no&flavour=spicy" - all non-alcoholic spicy drinks,</br>
 "https://vall-halla-api.vercel.app/api/search?name=piano" - "Piano Man" and "Piano Woman" recieps,</br>
 "https://vall-halla-api.vercel.app/api/search?recipe=aged" - all aged drinks,</br>
-"https://vall-halla-api.vercel.app/api/search?primary_type=promo&shortcut=3xT" - all promo drinks with 3 Karmotrine</p>   
+"https://vall-halla-api.vercel.app/api/search?type=promo&shortcut=3xT" - all promo drinks with 3 Karmotrine</p>   
 
 <h2>Structures</h2>
 
