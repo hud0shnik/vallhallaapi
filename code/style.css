@@ -1,4 +1,5 @@
 body {
+	font-family: "Press Start 2P";
     color: #ffffff;
     background-color: #1f1a2d;
 }
@@ -15,8 +16,10 @@ body {
     align-items: center;
 }
 .card a{
+    margin: 8px;
+    width: 200px;
     color: #ffffff;
-    font-size: 120%;
+    font-size: 90%;
     line-height: 1.75;
     border: 4px solid #130F1D;
     background-color: #000000;
@@ -25,4 +28,7 @@ body {
     padding-left: 10px; 
     padding-top: 5px; 
     padding-bottom: 5px;
+}
+.card a:hover{
+    color: #fc1783;
 }
