@@ -32,3 +32,7 @@ body {
 .card a:hover{
     color: #fc1783;
 }
+.header{
+    text-decoration: none;
+    color: #ffffff;
+}
