@@ -105,7 +105,6 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	godotenv.Load()
 
 	// Подключение к БД
-	fmt.Println("Connecting to DB ...")
 	db, err := sqlx.Open("postgres",
 		fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
 			os.Getenv("DB_HOST"),
@@ -114,12 +113,14 @@ func Info(w http.ResponseWriter, r *http.Request) {
 			os.Getenv("DB_NAME"),
 			os.Getenv("DB_PASSWORD")))
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		log.Fatalf("error opening DB: %s", err)
 	}
 
 	// Проверка подключения
 	err = db.Ping()
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		log.Fatalf("failed to ping DB: %s", err)
 	}
 
