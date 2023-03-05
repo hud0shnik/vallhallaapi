@@ -1,8 +1,8 @@
 # 🦾 VallHalla-api 🥃
 
-<i>Valhalla-api</i> provides fast access to the database of drink recipes from the game <b>"VA-11 Hall-A: Cyberpunk Bartender Action"</b>
+<i><b>Valhalla-api</b></i> provides fast access to the database of drink recipes from the game <b>"VA-11 Hall-A: Cyberpunk Bartender Action"</b>
 
-<h4>Request sample</h4>
+<h3>Request</h3>
   
 ``` Elixir
 https://vall-halla-api.vercel.app/api/search
@@ -25,7 +25,7 @@ description     |   string   | search by descriptions ('%VALUE%')
 "https://vall-halla-api.vercel.app/api/search?recipe=aged" - all aged drinks,</br>
 "https://vall-halla-api.vercel.app/api/search?type=promo&shortcut=3xT" - all promo drinks with 3 Karmotrine</p>   
 
-<h2>Structures</h2>
+<h3>Structures</h3>
 
 <h4>Response</h4>
 
@@ -73,7 +73,6 @@ S           | Toggle aging
 <p> For example, <i>"2xQ, 3xW, 5xE, 5xR, 3xT, A, all mixed."</i> means <i>"2 Adelhyde, 3 Bronson Extract, 5 Powdered Delta, 5 Flanergide and 3 Karmotrine, all on the rocks and mixed."</i></p>
 
 You can also use route <b>"/info"</b> instead of <b>"/search"</b> to get more information about drink (with description and full recipe). Parameters are the same.
-
 
 
 <img src="https://wakatime.com/badge/user/ee2709af-fc5f-498b-aaa1-3ea47bf12a00/project/ca6a9f63-8582-4243-905e-900ec35cede8.svg?style=for-the-badge">
