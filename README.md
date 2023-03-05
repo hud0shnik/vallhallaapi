@@ -2,7 +2,16 @@
 
 <i><b>Valhalla-api</b></i> provides fast access to the database of drink recipes from the game <b>"VA-11 Hall-A: Cyberpunk Bartender Action"</b>
 
-<h3>Request</h3>
+### Overview
+
+- [Overview](#overview)
+- [Request](#request)
+- [Structures](#structures)
+- [Types](#types)
+- [Shortcuts](#shortcuts)
+
+
+### Request
   
 ``` Elixir
 https://vall-halla-api.vercel.app/api/search
@@ -25,9 +34,9 @@ description     |   string   | search by descriptions ('%VALUE%')
 "https://vall-halla-api.vercel.app/api/search?recipe=aged" - all aged drinks,</br>
 "https://vall-halla-api.vercel.app/api/search?type=promo&shortcut=3xT" - all promo drinks with 3 Karmotrine</p>   
 
-<h3>Structures</h3>
+### Structures 
 
-<h4>Response</h4>
+#### Response
 
 Field                       |       Type         | Description
 ----------------------------|--------------------|------------
@@ -36,7 +45,7 @@ error                       |      string        |
 result                      |     []Drink        | slice of recipes
 
 
-<h4>Drink</h4>
+#### Drink
 
 Field                       |       Type         | Description
 ----------------------------|--------------------|------------
@@ -50,7 +59,7 @@ secondary_type              |      string        |
 shortcut                    |      string        | also may be "N/A"
 
 
-<h2>Types</h2>
+### Types
 
 Type                     |                                    Values       
 -------------------------|------------------------------------------------------------------------
@@ -58,7 +67,7 @@ primary_type             | "Bottled", "Classic", "Classy", "Girly", "Manly" or "
 secondary_Type           | "Bland", "Burning", "Happy", "N/A", "Sobering", "Soft", "Strong" or "Vintage"
 
 
-<h2>Shortcuts</h2>
+### Shortcuts
 
 Shortcuts   |    Action   
 ------------|-------------------- 
