@@ -114,6 +114,8 @@ func Info(w http.ResponseWriter, r *http.Request) {
 			os.Getenv("DB_PASSWORD")))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+		w.Write(json)
 		log.Fatalf("error opening DB: %s", err)
 	}
 
@@ -121,14 +123,18 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	err = db.Ping()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+		w.Write(json)
 		log.Fatalf("failed to ping DB: %s", err)
 	}
 
 	// Получение статистики, форматирование и отправка
 	jsonResp, err := json.Marshal(SearchDrinksInfo(db, r.URL.Query()))
 	if err != nil {
-		log.Fatalf("error with marshaling: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
+		json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+		w.Write(json)
+		log.Printf("json.Marshal error: %s", err)
 	} else {
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonResp)
