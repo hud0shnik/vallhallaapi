@@ -1,7 +1,7 @@
 body {
     font-family: "Press Start 2P";
-    background-color: #1f1a2d;
-    color: #ffffff;
+    background-color: #1F1A2D;
+    color: #FFFFFF;
 }
 .card {
     display: flex;
@@ -15,20 +15,20 @@ body {
 .card a {
     margin: 8px;
     width: 600px;
-    color: #ffffff;
+    color: #FFFFFF;
     font-size: 160%;
     line-height: 1.75;
-    border: 4px solid #130f1d;
+    border: 4px solid #130F1D;
     background-color: #000000;
     text-decoration: none;
     padding: 5px 10px;
 }
 .card a:hover {
-    color: #fc1783;
+    color: #FC1783;
 }
 .header {
     text-decoration: none;
-    color: #ffffff;
+    color: #FFFFFF;
 }
 .header:hover {
     text-decoration-line: underline;
