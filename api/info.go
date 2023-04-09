@@ -2,15 +2,12 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
 )
 
 // Структура респонса
@@ -101,31 +98,13 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	// Передача в заголовок респонса типа данных
 	w.Header().Set("Content-Type", "application/json")
 
-	// Инициализация переменных окружения
-	godotenv.Load()
-
 	// Подключение к БД
-	db, err := sqlx.Open("postgres",
-		fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
-			os.Getenv("DB_HOST"),
-			os.Getenv("DB_PORT"),
-			os.Getenv("DB_USERNAME"),
-			os.Getenv("DB_NAME"),
-			os.Getenv("DB_PASSWORD")))
+	db, err := ConnectDB()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+		json, _ := json.Marshal(map[string]string{"Error": err.Error()})
 		w.Write(json)
-		log.Fatalf("error opening DB: %s", err)
-	}
-
-	// Проверка подключения
-	err = db.Ping()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
-		w.Write(json)
-		log.Fatalf("failed to ping DB: %s", err)
+		log.Printf("connectDB error: %s", err)
 	}
 
 	// Получение статистики, форматирование и отправка
