@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -94,17 +95,16 @@ func SearchDrinks(db *sqlx.DB, values url.Values) SearchResponse {
 
 }
 
-// Роут "/search"
-func Search(w http.ResponseWriter, r *http.Request) {
-
-	// Передача в заголовок респонса типа данных
-	w.Header().Set("Content-Type", "application/json")
+// Функция подключения к БД
+func ConnectDB() (*sqlx.DB, error) {
 
 	// Инициализация переменных окружения
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		return nil, err
+	}
 
 	// Подключение к БД
-	fmt.Println("Connecting to DB ...")
 	db, err := sqlx.Open("postgres",
 		fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
 			os.Getenv("DB_HOST"),
@@ -113,19 +113,31 @@ func Search(w http.ResponseWriter, r *http.Request) {
 			os.Getenv("DB_NAME"),
 			os.Getenv("DB_PASSWORD")))
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
-		w.Write(json)
-		log.Fatalf("error opening DB: %s", err)
+		return nil, errors.New("Internal Server Error")
 	}
 
 	// Проверка подключения
 	err = db.Ping()
 	if err != nil {
+		return nil, errors.New("Internal Server Error")
+	}
+
+	return db, nil
+}
+
+// Роут "/search"
+func Search(w http.ResponseWriter, r *http.Request) {
+
+	// Передача в заголовок респонса типа данных
+	w.Header().Set("Content-Type", "application/json")
+
+	// Подключение к БД
+	db, err := ConnectDB()
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+		json, _ := json.Marshal(map[string]string{"Error": err.Error()})
 		w.Write(json)
-		log.Fatalf("failed to ping DB: %s", err)
+		log.Printf("connectDB error: %s", err)
 	}
 
 	// Получение статистики, форматирование и отправка
