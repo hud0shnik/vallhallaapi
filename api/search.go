@@ -99,10 +99,7 @@ func SearchDrinks(db *sqlx.DB, values url.Values) SearchResponse {
 func ConnectDB() (*sqlx.DB, error) {
 
 	// Инициализация переменных окружения
-	err := godotenv.Load()
-	if err != nil {
-		return nil, err
-	}
+	godotenv.Load()
 
 	// Подключение к БД
 	db, err := sqlx.Open("postgres",
