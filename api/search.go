@@ -1,4 +1,4 @@
-package handler
+package api
 
 import (
 	"encoding/json"
@@ -15,6 +15,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Структура ошибки
+type ApiError struct {
+	Success bool   `json:"success"`
+	Error   string `json:"error"`
+}
+
 // Структура респонса
 type SearchResponse struct {
 	Success bool    `json:"success"`
@@ -24,7 +30,6 @@ type SearchResponse struct {
 
 // Структура коктейля
 type Drink struct {
-	//Id           int    `json:"id" db:"id"`
 	Name           string `json:"name"`
 	Price          int    `json:"price"`
 	Alcoholic      string `json:"alcoholic"`
@@ -132,16 +137,17 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	db, err := ConnectDB()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(map[string]string{"Error": err.Error()})
+		json, _ := json.Marshal(ApiError{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("connectDB error: %s", err)
+		return
 	}
 
 	// Получение статистики, форматирование и отправка
 	jsonResp, err := json.Marshal(SearchDrinks(db, r.URL.Query()))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+		json, _ := json.Marshal(ApiError{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("json.Marshal error: %s", err)
 	} else {
