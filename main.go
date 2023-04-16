@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"os"
 	"time"
-	api "vallhallaapi/api"
+	"vallhallaapi/api"
 
 	"github.com/gorilla/mux"
 )
 
-// Функция для ручного запуска на 127.0.0.1
+// Функция для ручного запуска
 func main() {
 
 	// Вывод времени начала работы
