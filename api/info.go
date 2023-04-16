@@ -1,4 +1,4 @@
-package handler
+package api
 
 import (
 	"encoding/json"
@@ -19,7 +19,6 @@ type InfoResponse struct {
 
 // Структура коктейля
 type DrinkInfo struct {
-	//Id           int    `json:"id" db:"id"`
 	Name           string `json:"name"`
 	Price          int    `json:"price"`
 	Alcoholic      string `json:"alcoholic"`
@@ -102,16 +101,17 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	db, err := ConnectDB()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(map[string]string{"Error": err.Error()})
+		json, _ := json.Marshal(ApiError{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("connectDB error: %s", err)
+		return
 	}
 
 	// Получение статистики, форматирование и отправка
 	jsonResp, err := json.Marshal(SearchDrinksInfo(db, r.URL.Query()))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+		json, _ := json.Marshal(ApiError{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("json.Marshal error: %s", err)
 	} else {
