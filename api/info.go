@@ -32,7 +32,7 @@ type drinkInfo struct {
 }
 
 // Функция получения информации о коктейле
-func searchDrinksInfo(db *sqlx.DB, values url.Values) infoResponse {
+func searchDrinksInfo(db *sqlx.DB, values url.Values) (infoResponse, error) {
 
 	// Начало запроса и слайс параметров
 	query := "SELECT name, price, alcoholic, ice, flavour, primary_type, secondary_type, recipe, shortcut, description FROM drinks"
@@ -68,7 +68,7 @@ func searchDrinksInfo(db *sqlx.DB, values url.Values) infoResponse {
 	}
 
 	// Если есть параметры, передача их в запрос
-	if len(parameters) > 0 {
+	if len(parameters) != 0 {
 		query += " WHERE " + strings.Join(parameters, " AND ")
 	}
 
@@ -78,16 +78,18 @@ func searchDrinksInfo(db *sqlx.DB, values url.Values) infoResponse {
 	// Получение и проверка данных
 	err := db.Select(&result.Drinks, query+" ORDER BY price DESC")
 	if err != nil {
-		result.Error = err.Error()
-	} else if len(result.Drinks) == 0 {
-		result.Success = true
-		result.Error = "drinks not found"
-	} else {
-		result.Success = true
+		return result, err
 	}
 
+	// Проверка количества рецептов
+	if len(result.Drinks) == 0 {
+		result.Error = "drinks not found"
+	}
+
+	result.Success = true
+
 	// Вывод результата
-	return result
+	return result, nil
 
 }
 
@@ -98,20 +100,30 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Подключение к БД
-	db, err := ConnectDB()
+	db, err := connectDB()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(ApiError{Error: "Internal Server Error"})
+		json, _ := json.Marshal(apiError{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("connectDB error: %s", err)
 		return
 	}
 
-	// Получение статистики, форматирование и отправка
-	jsonResp, err := json.Marshal(searchDrinksInfo(db, r.URL.Query()))
+	// Получение рецептов
+	drinks, err := searchDrinksInfo(db, r.URL.Query())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(ApiError{Error: "Internal Server Error"})
+		json, _ := json.Marshal(apiError{Error: "Internal Server Error"})
+		w.Write(json)
+		log.Printf("searchDrinksInfo error: %s", err)
+		return
+	}
+
+	// Получение статистики, форматирование и отправка
+	jsonResp, err := json.Marshal(drinks)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json, _ := json.Marshal(apiError{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("json.Marshal error: %s", err)
 	} else {
