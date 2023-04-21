@@ -11,14 +11,14 @@ import (
 )
 
 // Структура респонса
-type InfoResponse struct {
+type infoResponse struct {
 	Success bool        `json:"success"`
 	Error   string      `json:"error"`
-	Drinks  []DrinkInfo `json:"result"`
+	Drinks  []drinkInfo `json:"result"`
 }
 
 // Структура коктейля
-type DrinkInfo struct {
+type drinkInfo struct {
 	Name           string `json:"name"`
 	Price          int    `json:"price"`
 	Alcoholic      string `json:"alcoholic"`
@@ -32,7 +32,7 @@ type DrinkInfo struct {
 }
 
 // Функция получения информации о коктейле
-func SearchDrinksInfo(db *sqlx.DB, values url.Values) InfoResponse {
+func searchDrinksInfo(db *sqlx.DB, values url.Values) infoResponse {
 
 	// Начало запроса и слайс параметров
 	query := "SELECT name, price, alcoholic, ice, flavour, primary_type, secondary_type, recipe, shortcut, description FROM drinks"
@@ -73,7 +73,7 @@ func SearchDrinksInfo(db *sqlx.DB, values url.Values) InfoResponse {
 	}
 
 	// Инициализация результата
-	var result InfoResponse
+	var result infoResponse
 
 	// Получение и проверка данных
 	err := db.Select(&result.Drinks, query+" ORDER BY price DESC")
@@ -108,7 +108,7 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Получение статистики, форматирование и отправка
-	jsonResp, err := json.Marshal(SearchDrinksInfo(db, r.URL.Query()))
+	jsonResp, err := json.Marshal(searchDrinksInfo(db, r.URL.Query()))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json, _ := json.Marshal(ApiError{Error: "Internal Server Error"})
