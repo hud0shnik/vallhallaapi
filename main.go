@@ -1,11 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"time"
 	"vallhallaapi/api"
 
 	"github.com/gorilla/mux"
@@ -15,8 +12,7 @@ import (
 func main() {
 
 	// Вывод времени начала работы
-	fmt.Println("API Start: " + string(time.Now().Format("2006-01-02 15:04:05")))
-	fmt.Println("Port:\t" + os.Getenv("PORT"))
+	log.Println("API Start at 8080 port")
 
 	// Роутер
 	router := mux.NewRouter()
@@ -26,6 +22,6 @@ func main() {
 	router.HandleFunc("/api/info", api.Info).Methods("GET")
 
 	// Запуск API
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
+	log.Fatal(http.ListenAndServe(":8080", router))
 
 }
