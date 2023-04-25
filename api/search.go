@@ -14,12 +14,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// Структура ошибки
-type apiError struct {
-	Success bool   `json:"success"`
-	Error   string `json:"error"`
-}
-
 // Структура респонса
 type searchResponse struct {
 	Success bool    `json:"success"`
@@ -91,7 +85,7 @@ func searchDrinks(db *sqlx.DB, values url.Values) (searchResponse, error) {
 
 	// Проверка количество рецептов
 	if len(result.Drinks) == 0 {
-		result.Error = "drinks not found"
+		result.Error = "Drinks not found"
 	}
 
 	result.Success = true
@@ -138,7 +132,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	db, err := connectDB()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(apiError{Error: "Internal Server Error"})
+		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("connectDB error: %s", err)
 		return
@@ -148,7 +142,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	drinks, err := searchDrinks(db, r.URL.Query())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(apiError{Error: "Internal Server Error"})
+		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("searchDrinks error: %s", err)
 		return
@@ -157,7 +151,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	// Проверка на наличие рецептов
 	if len(drinks.Drinks) == 0 {
 		w.WriteHeader(http.StatusNotFound)
-		json, _ := json.Marshal(apiError{Error: "Drinks not found"})
+		json, _ := json.Marshal(drinks)
 		w.Write(json)
 		return
 	}
@@ -166,7 +160,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	jsonResp, err := json.Marshal(drinks)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(apiError{Error: "Internal Server Error"})
+		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("json.Marshal error: %s", err)
 		return

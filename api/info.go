@@ -83,7 +83,7 @@ func searchDrinksInfo(db *sqlx.DB, values url.Values) (infoResponse, error) {
 
 	// Проверка количества рецептов
 	if len(result.Drinks) == 0 {
-		result.Error = "drinks not found"
+		result.Error = "Drinks not found"
 	}
 
 	result.Success = true
@@ -103,7 +103,7 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	db, err := connectDB()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(apiError{Error: "Internal Server Error"})
+		json, _ := json.Marshal(infoResponse{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("connectDB error: %s", err)
 		return
@@ -113,7 +113,7 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	drinks, err := searchDrinksInfo(db, r.URL.Query())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(apiError{Error: "Internal Server Error"})
+		json, _ := json.Marshal(infoResponse{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("searchDrinksInfo error: %s", err)
 		return
@@ -122,7 +122,7 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	// Проверка на наличие рецептов
 	if len(drinks.Drinks) == 0 {
 		w.WriteHeader(http.StatusNotFound)
-		json, _ := json.Marshal(apiError{Error: "Drinks not found"})
+		json, _ := json.Marshal(drinks)
 		w.Write(json)
 		return
 	}
@@ -131,7 +131,7 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	jsonResp, err := json.Marshal(drinks)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(apiError{Error: "Internal Server Error"})
+		json, _ := json.Marshal(infoResponse{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("json.Marshal error: %s", err)
 		return
