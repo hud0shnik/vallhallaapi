@@ -119,16 +119,25 @@ func Info(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Получение статистики, форматирование и отправка
+	// Проверка на наличие рецептов
+	if len(drinks.Drinks) == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		json, _ := json.Marshal(apiError{Error: "Drinks not found"})
+		w.Write(json)
+		return
+	}
+
+	// Перевод в json
 	jsonResp, err := json.Marshal(drinks)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json, _ := json.Marshal(apiError{Error: "Internal Server Error"})
 		w.Write(json)
 		log.Printf("json.Marshal error: %s", err)
-	} else {
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonResp)
+		return
 	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonResp)
 
 }
