@@ -110,7 +110,7 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Получение рецептов
-	drinks, err := searchDrinksInfo(db, r.URL.Query())
+	result, err := searchDrinksInfo(db, r.URL.Query())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json, _ := json.Marshal(infoResponse{Error: "Internal Server Error"})
@@ -120,15 +120,15 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Проверка на наличие рецептов
-	if len(drinks.Drinks) == 0 {
+	if len(result.Drinks) == 0 {
 		w.WriteHeader(http.StatusNotFound)
-		json, _ := json.Marshal(drinks)
+		json, _ := json.Marshal(result)
 		w.Write(json)
 		return
 	}
 
 	// Перевод в json
-	jsonResp, err := json.Marshal(drinks)
+	jsonResp, err := json.Marshal(result)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json, _ := json.Marshal(infoResponse{Error: "Internal Server Error"})
