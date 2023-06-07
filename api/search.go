@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"vallhallaapi/internal/postgres"
+	"vallhallaapi/postgres"
 
 	"github.com/jmoiron/sqlx"
 )
