@@ -2,16 +2,13 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
+	"vallhallaapi/internal/postgres"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 )
 
 // Структура респонса
@@ -95,33 +92,6 @@ func searchDrinks(db *sqlx.DB, values url.Values) (searchResponse, error) {
 
 }
 
-// Функция подключения к БД
-func connectDB() (*sqlx.DB, error) {
-
-	// Инициализация переменных окружения
-	godotenv.Load()
-
-	// Подключение к БД
-	db, err := sqlx.Open("postgres",
-		fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
-			os.Getenv("DB_HOST"),
-			os.Getenv("DB_PORT"),
-			os.Getenv("DB_USERNAME"),
-			os.Getenv("DB_NAME"),
-			os.Getenv("DB_PASSWORD")))
-	if err != nil {
-		return nil, fmt.Errorf("in sqlx.Open: %w", err)
-	}
-
-	// Проверка подключения
-	err = db.Ping()
-	if err != nil {
-		return nil, fmt.Errorf("in db.Ping: %w", err)
-	}
-
-	return db, nil
-}
-
 // Роут "/search"
 func Search(w http.ResponseWriter, r *http.Request) {
 
@@ -137,7 +107,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Подключение к БД
-	db, err := connectDB()
+	db, err := postgres.ConnectDB()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})

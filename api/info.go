@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"vallhallaapi/internal/postgres"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -108,7 +109,7 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Подключение к БД
-	db, err := connectDB()
+	db, err := postgres.ConnectDB()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json, _ := json.Marshal(infoResponse{Error: "Internal Server Error"})
