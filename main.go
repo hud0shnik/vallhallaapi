@@ -3,7 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
-	"vallhallaapi/api"
+
+	"github.com/hud0shnik/VallHalla-api/api"
 
 	"github.com/gorilla/mux"
 )
