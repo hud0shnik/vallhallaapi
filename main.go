@@ -1,10 +1,10 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/hud0shnik/VallHalla-api/api"
+	"github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
 )
@@ -12,8 +12,11 @@ import (
 // Функция для ручного запуска
 func main() {
 
+	// Настройка логгера
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+
 	// Вывод времени начала работы
-	log.Println("API Start at 8080 port")
+	logrus.Println("API Start at 8080 port")
 
 	// Роутер
 	router := mux.NewRouter()
@@ -23,6 +26,6 @@ func main() {
 	router.HandleFunc("/api/info", api.Info).Methods("GET")
 
 	// Запуск API
-	log.Fatal(http.ListenAndServe(":8080", router))
+	logrus.Fatal(http.ListenAndServe(":8080", router))
 
 }

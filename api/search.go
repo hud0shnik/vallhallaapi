@@ -2,12 +2,12 @@ package api
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/hud0shnik/VallHalla-api/postgres"
+	"github.com/sirupsen/logrus"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -113,7 +113,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
 		w.Write(json)
-		log.Printf("connectDB error: %s", err)
+		logrus.Printf("connectDB error: %s", err)
 		return
 	}
 
@@ -123,7 +123,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
 		w.Write(json)
-		log.Printf("searchDrinks error: %s", err)
+		logrus.Printf("searchDrinks error: %s", err)
 		return
 	}
 
@@ -141,7 +141,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
 		w.Write(json)
-		log.Printf("json.Marshal error: %s", err)
+		logrus.Printf("json.Marshal error: %s", err)
 		return
 	}
 
