@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/hud0shnik/VallHalla-api/api"
 	"github.com/sirupsen/logrus"
@@ -13,7 +14,9 @@ import (
 func main() {
 
 	// Настройка логгера
-	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetFormatter(&logrus.JSONFormatter{
+		TimestampFormat: time.DateTime,
+	})
 
 	// Вывод времени начала работы
 	logrus.Println("API Start at 8080 port")
