@@ -100,7 +100,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Проверка на попытку SQL-инъекций
-	if strings.ContainsAny(r.URL.String(), "%'") {
+	if strings.Contains(r.URL.String(), "%") || len(r.URL.Query().Encode()) > 15 {
 		w.WriteHeader(http.StatusBadRequest)
 		json, _ := json.Marshal(infoResponse{Error: "Bad Request"})
 		w.Write(json)
