@@ -4,12 +4,12 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/hud0shnik/VallHalla-api/postgres"
+	"github.com/hud0shnik/VallHalla-api/internal/postgres"
 	"github.com/joho/godotenv"
 )
 
-// Проверка функции получения рецепта о коктейле
-func TestSearchDrinks(t *testing.T) {
+// Проверка функции получения информации о коктейле
+func TestSearchDrinksInfo(t *testing.T) {
 
 	// Загрузка переменных окружения
 	godotenv.Load("../.env")
@@ -28,7 +28,7 @@ func TestSearchDrinks(t *testing.T) {
 	values.Add("Ice", "No")
 
 	// Исполнение запроса
-	resp, err := searchDrinks(db, values)
+	resp, err := searchDrinksInfo(db, values)
 	if err != nil {
 		t.Errorf("searchDrinksInfo() error: %s", err.Error())
 	}

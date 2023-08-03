@@ -6,21 +6,20 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/hud0shnik/VallHalla-api/postgres"
-	"github.com/sirupsen/logrus"
-
+	"github.com/hud0shnik/VallHalla-api/internal/postgres"
 	"github.com/jmoiron/sqlx"
+	"github.com/sirupsen/logrus"
 )
 
 // Структура респонса
-type infoResponse struct {
-	Success bool        `json:"success"`
-	Error   string      `json:"error"`
-	Drinks  []drinkInfo `json:"result"`
+type searchResponse struct {
+	Success bool    `json:"success"`
+	Error   string  `json:"error"`
+	Drinks  []drink `json:"result"`
 }
 
 // Структура коктейля
-type drinkInfo struct {
+type drink struct {
 	Name           string `json:"name"`
 	Price          int    `json:"price"`
 	Alcoholic      string `json:"alcoholic"`
@@ -28,16 +27,14 @@ type drinkInfo struct {
 	Flavour        string `json:"flavour"`
 	Primary_Type   string `json:"primary_type"`
 	Secondary_Type string `json:"secondary_type"`
-	Recipe         string `json:"recipe"`
 	Shortcut       string `json:"shortcut"`
-	Description    string `json:"description"`
 }
 
 // Функция получения информации о коктейле
-func searchDrinksInfo(db *sqlx.DB, values url.Values) (infoResponse, error) {
+func searchDrinks(db *sqlx.DB, values url.Values) (searchResponse, error) {
 
 	// Начало запроса и слайс параметров
-	query := "SELECT name, price, alcoholic, ice, flavour, primary_type, secondary_type, recipe, shortcut, description FROM drinks"
+	query := "SELECT name, price, alcoholic, ice, flavour, primary_type, secondary_type, shortcut FROM drinks"
 	parameters := []string{}
 
 	// Проверки на наличие параметров и запись их в слайс
@@ -75,7 +72,7 @@ func searchDrinksInfo(db *sqlx.DB, values url.Values) (infoResponse, error) {
 	}
 
 	// Инициализация результата
-	var result infoResponse
+	var result searchResponse
 
 	// Получение и проверка данных
 	err := db.Select(&result.Drinks, query+" ORDER BY price DESC")
@@ -83,7 +80,7 @@ func searchDrinksInfo(db *sqlx.DB, values url.Values) (infoResponse, error) {
 		return result, err
 	}
 
-	// Проверка количества рецептов
+	// Проверка количество рецептов
 	if len(result.Drinks) == 0 {
 		result.Error = "Drinks not found"
 	}
@@ -95,8 +92,8 @@ func searchDrinksInfo(db *sqlx.DB, values url.Values) (infoResponse, error) {
 
 }
 
-// Роут "/info"
-func Info(w http.ResponseWriter, r *http.Request) {
+// Роут "/search"
+func Search(w http.ResponseWriter, r *http.Request) {
 
 	// Передача в заголовок респонса типа данных
 	w.Header().Set("Content-Type", "application/json")
@@ -113,19 +110,19 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	db, err := postgres.ConnectDB()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(infoResponse{Error: "Internal Server Error"})
+		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
 		w.Write(json)
 		logrus.Printf("connectDB error: %s", err)
 		return
 	}
 
-	// Получение рецептов
-	result, err := searchDrinksInfo(db, r.URL.Query())
+	// Поиск рецептов
+	result, err := searchDrinks(db, r.URL.Query())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(infoResponse{Error: "Internal Server Error"})
+		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
 		w.Write(json)
-		logrus.Printf("searchDrinksInfo error: %s", err)
+		logrus.Printf("searchDrinks error: %s", err)
 		return
 	}
 
@@ -141,7 +138,7 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	jsonResp, err := json.Marshal(result)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(infoResponse{Error: "Internal Server Error"})
+		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
 		w.Write(json)
 		logrus.Printf("json.Marshal error: %s", err)
 		return

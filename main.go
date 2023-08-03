@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/hud0shnik/VallHalla-api/api"
+	"github.com/hud0shnik/VallHalla-api/internal/api"
 	"github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
