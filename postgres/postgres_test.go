@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hud0shnik/vallhallaapi/internal/postgres"
+	"github.com/hud0shnik/vallhallaapi/postgres"
 	"github.com/joho/godotenv"
 )
 
