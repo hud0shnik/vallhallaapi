@@ -1,4 +1,4 @@
-module github.com/hud0shnik/VallHalla-api
+module github.com/hud0shnik/vallhallaapi
 
 go 1.20
 
