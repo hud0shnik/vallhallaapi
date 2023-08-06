@@ -1,10 +1,9 @@
-package postgres_test
+package storage
 
 import (
 	"os"
 	"testing"
 
-	"github.com/hud0shnik/vallhallaapi/postgres"
 	"github.com/joho/godotenv"
 )
 
@@ -40,7 +39,7 @@ func TestConnectDB(t *testing.T) {
 	godotenv.Load("../.env")
 
 	// Подключение к базе данных
-	_, err := postgres.ConnectDB()
+	_, err := ConnectDB()
 	if err != nil {
 		t.Errorf("Can't reach Postgres: %s", err.Error())
 	}

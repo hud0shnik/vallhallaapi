@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/hud0shnik/vallhallaapi/postgres"
+	"github.com/hud0shnik/vallhallaapi/storage"
 	"github.com/joho/godotenv"
 )
 
@@ -15,9 +15,9 @@ func TestSearchDrinks(t *testing.T) {
 	godotenv.Load("../.env")
 
 	// Подключение к базе данных
-	db, err := postgres.ConnectDB()
+	db, err := storage.ConnectDB()
 	if err != nil {
-		t.Errorf("Can't reach Postgres: %s", err.Error())
+		t.Errorf("Can't reach storage: %s", err.Error())
 	}
 
 	// Генерация запроса

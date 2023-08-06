@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/hud0shnik/vallhallaapi/postgres"
+	"github.com/hud0shnik/vallhallaapi/storage"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 )
@@ -107,7 +107,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Подключение к БД
-	db, err := postgres.ConnectDB()
+	db, err := storage.ConnectDB()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
