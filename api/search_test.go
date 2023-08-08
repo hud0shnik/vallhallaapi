@@ -8,7 +8,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// Проверка функции получения рецепта о коктейле
+// TestSearchDrinks - проверка функции получения рецепта о коктейле
 func TestSearchDrinks(t *testing.T) {
 
 	// Загрузка переменных окружения
