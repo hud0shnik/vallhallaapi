@@ -11,14 +11,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Структура респонса
+// searchResponse - структура респонса
 type searchResponse struct {
 	Success bool    `json:"success"`
 	Error   string  `json:"error"`
 	Drinks  []drink `json:"result"`
 }
 
-// Структура коктейля
+// searchResponse - структура коктейля
 type drink struct {
 	Name           string `json:"name"`
 	Price          int    `json:"price"`
@@ -30,7 +30,7 @@ type drink struct {
 	Shortcut       string `json:"shortcut"`
 }
 
-// Функция получения информации о коктейле
+// searchDrinks - функция получения информации о коктейле
 func searchDrinks(db *sqlx.DB, values url.Values) (searchResponse, error) {
 
 	// Начало запроса и слайс параметров
@@ -92,7 +92,7 @@ func searchDrinks(db *sqlx.DB, values url.Values) (searchResponse, error) {
 
 }
 
-// Роут "/search"
+// Search - роут "/search"
 func Search(w http.ResponseWriter, r *http.Request) {
 
 	// Передача в заголовок респонса типа данных
