@@ -39,8 +39,7 @@ func TestConnectDB(t *testing.T) {
 	godotenv.Load("../.env")
 
 	// Подключение к базе данных
-	_, err := ConnectDB()
-	if err != nil {
+	if _, err := ConnectDB(); err != nil {
 		t.Errorf("Can't reach Postgres: %s", err.Error())
 	}
 
