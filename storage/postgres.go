@@ -9,7 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// Функция подключения к БД
+// ConnectDB - функция подключения к БД
 func ConnectDB() (*sqlx.DB, error) {
 
 	// Инициализация переменных окружения

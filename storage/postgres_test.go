@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// Проверка наличия всех переменных окружения
+// TestEnv - проверка наличия всех переменных окружения
 func TestEnv(t *testing.T) {
 
 	// Загрузка переменных окружения
@@ -32,7 +32,7 @@ func TestEnv(t *testing.T) {
 
 }
 
-// Проверка соединения с базой данных
+// TestConnectDB - проверка соединения с базой данных
 func TestConnectDB(t *testing.T) {
 
 	// Загрузка переменных окружения
