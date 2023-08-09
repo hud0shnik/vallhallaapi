@@ -75,8 +75,7 @@ func searchDrinks(db *sqlx.DB, values url.Values) (searchResponse, error) {
 	var result searchResponse
 
 	// Получение и проверка данных
-	err := db.Select(&result.Drinks, query+" ORDER BY price DESC")
-	if err != nil {
+	if err := db.Select(&result.Drinks, query+" ORDER BY price DESC"); err != nil {
 		return result, err
 	}
 
