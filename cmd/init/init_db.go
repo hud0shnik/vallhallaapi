@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 )
 
 // drinkInfo - структура коктейля
@@ -27,9 +28,14 @@ type drinkInfo struct {
 // Функция записи данных в бд
 func main() {
 
+	// Настройка логгера
+	logrus.SetFormatter(&logrus.JSONFormatter{
+		TimestampFormat: time.DateTime,
+	})
+
 	godotenv.Load()
 
-	fmt.Println("Connecting to DB ...")
+	logrus.Info("Connecting to DB ...")
 	db, err := sqlx.Open("postgres",
 		fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
 			os.Getenv("DB_HOST"),
@@ -38,13 +44,13 @@ func main() {
 			os.Getenv("DB_NAME"),
 			os.Getenv("DB_PASSWORD")))
 	if err != nil {
-		log.Fatalf("error opening DB: %s", err)
+		logrus.Fatalf("error opening DB: %s", err)
 	}
 
 	// Проверка подключения
 	err = db.Ping()
 	if err != nil {
-		log.Fatalf("failed to ping DB: %s", err)
+		logrus.Fatalf("failed to ping DB: %s", err)
 	}
 
 	var drinks []drinkInfo
@@ -373,21 +379,21 @@ func main() {
 	// Создание транзакции
 	tx, err := db.Begin()
 	if err != nil {
-		return
+		logrus.Fatalf("failed to begin transaction: %s", err)
 	}
+
+	// Вывод времени начала работы
+	logrus.Info("Start inserting...")
 
 	// Проход по всем именам
 	for i, d := range drinks {
-
-		// Вывод в консоль уведомления о добавлении имени в транзакцию
-		fmt.Println("Inserting...\t", i)
 
 		// Добавление запроса к транзакции его проверка
 		_, err = tx.Exec("INSERT INTO drinks (id, name, alcoholic, ice, flavour, price, primary_type, secondary_type, recipe, shortcut, description) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
 			i+1, d.Name, d.Alcoholic, d.Ice, d.Flavour, d.Price, d.Primary_Type, d.Secondary_Type, d.Recipe, d.Shortcut, d.Description)
 		if err != nil {
 			tx.Rollback()
-			fmt.Println("Exec error:", err)
+			logrus.Fatalf("failed to insert: %s", err)
 			return
 
 		}
@@ -396,4 +402,5 @@ func main() {
 
 	// Исполнение транзакции
 	tx.Commit()
+	logrus.Info("Done.")
 }
