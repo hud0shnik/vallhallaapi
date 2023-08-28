@@ -1,11 +1,11 @@
 package main
 
 import (
-	"net/http"
 	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/hud0shnik/vallhallaapi/api"
+	"github.com/hud0shnik/vallhallaapi/server"
 	"github.com/sirupsen/logrus"
 )
 
@@ -29,6 +29,6 @@ func main() {
 	router.Get("/api/info", api.Info)
 
 	// Запуск API
-	logrus.Fatal(http.ListenAndServe(":8080", router))
+	logrus.Fatal(server.NewServer(router, "8080").Run())
 
 }
