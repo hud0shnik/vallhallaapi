@@ -94,8 +94,9 @@ func searchDrinks(db *sqlx.DB, values url.Values) (searchResponse, error) {
 // Search - роут "/search"
 func Search(w http.ResponseWriter, r *http.Request) {
 
-	// Передача в заголовок респонса типа данных
+	// Установка заголовков
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
 
 	// Проверка на попытку SQL-инъекций
 	if strings.ContainsAny(r.URL.String(), "%'`\"") {
