@@ -9,10 +9,12 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// config - структура конфигов
 type config struct {
 	Server controllers.Config `yaml:"server"`
 }
 
+// configure получает конфиги из файла
 func configure(fileName string) (*config, error) {
 
 	data, err := os.ReadFile(fileName)
@@ -29,7 +31,6 @@ func configure(fileName string) (*config, error) {
 	return &config, nil
 }
 
-// main - функция для ручного запуска
 func main() {
 
 	// Настройка логгера
@@ -37,6 +38,7 @@ func main() {
 		TimestampFormat: time.DateTime,
 	})
 
+	// Получение конфигов
 	config, err := configure("config.yaml")
 	if err != nil {
 		logrus.WithError(err).Fatal("can't read config")
@@ -45,6 +47,7 @@ func main() {
 	// Вывод времени начала работы
 	logrus.Println("API Start at 8080 port")
 
+	// Создание сервера
 	s := controllers.NewServer(&config.Server)
 
 	// Запуск API

@@ -35,6 +35,7 @@ func NewServer(config *Config) *Server {
 	return s
 }
 
+// NewRouter создаёт новый роутер
 func (s *Server) NewRouter() {
 
 	// Роутер
