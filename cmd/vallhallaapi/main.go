@@ -1,13 +1,33 @@
 package main
 
 import (
+	"os"
 	"time"
 
-	"github.com/go-chi/chi"
-	"github.com/hud0shnik/vallhallaapi/api"
-	"github.com/hud0shnik/vallhallaapi/server"
+	"github.com/hud0shnik/vallhallaapi/controllers"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 )
+
+type config struct {
+	Server controllers.Config `yaml:"server"`
+}
+
+func configure(fileName string) (*config, error) {
+
+	data, err := os.ReadFile(fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	var config config
+
+	if err = yaml.Unmarshal(data, &config); err != nil {
+		return nil, err
+	}
+
+	return &config, nil
+}
 
 // main - функция для ручного запуска
 func main() {
@@ -17,18 +37,17 @@ func main() {
 		TimestampFormat: time.DateTime,
 	})
 
+	config, err := configure("config.yaml")
+	if err != nil {
+		logrus.WithError(err).Fatal("can't read config")
+	}
+
 	// Вывод времени начала работы
 	logrus.Println("API Start at 8080 port")
 
-	// Роутер
-	router := chi.NewRouter()
-
-	// Маршруты
-
-	router.Get("/api/search", api.Search)
-	router.Get("/api/info", api.Info)
+	s := controllers.NewServer(&config.Server)
 
 	// Запуск API
-	logrus.Fatal(server.NewServer(router, "8080").Run())
+	logrus.Fatal(s.Server.ListenAndServe())
 
 }
