@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"os"
 	"time"
 
-	"github.com/jmoiron/sqlx"
+	"github.com/hud0shnik/vallhallaapi/storage"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
@@ -35,22 +33,10 @@ func main() {
 
 	godotenv.Load()
 
-	logrus.Info("Connecting to DB ...")
-	db, err := sqlx.Open("postgres",
-		fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
-			os.Getenv("DB_HOST"),
-			os.Getenv("DB_PORT"),
-			os.Getenv("DB_USERNAME"),
-			os.Getenv("DB_NAME"),
-			os.Getenv("DB_PASSWORD")))
+	// Подключение к БД
+	db, err := storage.ConnectDB()
 	if err != nil {
 		logrus.Fatalf("error opening DB: %s", err)
-	}
-
-	// Проверка подключения
-	err = db.Ping()
-	if err != nil {
-		logrus.Fatalf("failed to ping DB: %s", err)
 	}
 
 	var drinks []drinkInfo
