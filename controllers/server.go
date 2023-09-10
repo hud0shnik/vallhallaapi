@@ -18,6 +18,7 @@ type Server struct {
 
 // NewServer создаёт новый сервер
 func NewServer(config *Config) *Server {
+
 	s := &Server{
 		basePath:       config.BasePath,
 		requestTimeout: config.RequestTimeout,
@@ -42,8 +43,8 @@ func (s *Server) NewRouter() {
 	router := chi.NewRouter()
 
 	// Маршруты
-	router.Get("/api/search", api.Search)
-	router.Get("/api/info", api.Info)
+	router.Get(s.basePath+"/search", api.Search)
+	router.Get(s.basePath+"/info", api.Info)
 
 	s.router = router
 
