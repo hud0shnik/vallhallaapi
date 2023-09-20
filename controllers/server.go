@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/hud0shnik/vallhallaapi/api"
 )
 
@@ -41,6 +42,7 @@ func (s *Server) NewRouter() {
 
 	// Роутер
 	router := chi.NewRouter()
+	router.Use(middleware.Timeout(s.requestTimeout))
 
 	// Маршруты
 	router.Get(s.basePath+"/search", api.Search)
