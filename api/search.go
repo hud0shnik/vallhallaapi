@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 	"net/url"
 	"strings"
@@ -94,24 +93,16 @@ func searchDrinks(db *sqlx.DB, values url.Values) (searchResponse, error) {
 // Search - роут "/search"
 func Search(w http.ResponseWriter, r *http.Request) {
 
-	// Установка заголовков
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Header().Set("X-Content-Type-Options", "nosniff")
-
 	// Проверка на попытку SQL-инъекций
 	if strings.ContainsAny(r.URL.String(), "%'`\"") {
-		w.WriteHeader(http.StatusBadRequest)
-		json, _ := json.Marshal(infoResponse{Error: "Bad Request"})
-		w.Write(json)
+		response(w, http.StatusBadRequest, infoResponse{Error: "Bad Request"})
 		return
 	}
 
 	// Подключение к БД
 	db, err := storage.ConnectDB()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
-		w.Write(json)
+		response(w, http.StatusInternalServerError, infoResponse{Error: "Internal Server Error"})
 		logrus.Printf("connectDB error: %s", err)
 		return
 	}
@@ -119,32 +110,17 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	// Поиск рецептов
 	result, err := searchDrinks(db, r.URL.Query())
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
-		w.Write(json)
+		response(w, http.StatusInternalServerError, infoResponse{Error: "Internal Server Error"})
 		logrus.Printf("searchDrinks error: %s", err)
 		return
 	}
 
 	// Проверка на наличие рецептов
 	if len(result.Drinks) == 0 {
-		w.WriteHeader(http.StatusNotFound)
-		json, _ := json.Marshal(result)
-		w.Write(json)
+		response(w, http.StatusNotFound, result)
 		return
 	}
 
-	// Перевод в json
-	jsonResp, err := json.Marshal(result)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(searchResponse{Error: "Internal Server Error"})
-		w.Write(json)
-		logrus.Printf("json.Marshal error: %s", err)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonResp)
+	response(w, http.StatusOK, result)
 
 }

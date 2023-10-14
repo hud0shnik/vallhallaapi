@@ -93,27 +93,32 @@ func searchDrinksInfo(db *sqlx.DB, values url.Values) (infoResponse, error) {
 
 }
 
-// Info - роут "/info"
-func Info(w http.ResponseWriter, r *http.Request) {
+// Response отправляет ответ на реквест
+func response(w http.ResponseWriter, statusCode int, body any) {
 
 	// Установка заголовков
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 
+	// Установка статускода и запись тела респонса
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(body)
+
+}
+
+// Info - роут "/info"
+func Info(w http.ResponseWriter, r *http.Request) {
+
 	// Проверка на попытку SQL-инъекций
 	if strings.ContainsAny(r.URL.String(), "%'`\"") {
-		w.WriteHeader(http.StatusBadRequest)
-		json, _ := json.Marshal(infoResponse{Error: "Bad Request"})
-		w.Write(json)
+		response(w, http.StatusBadRequest, infoResponse{Error: "Bad Request"})
 		return
 	}
 
 	// Подключение к БД
 	db, err := storage.ConnectDB()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(infoResponse{Error: "Internal Server Error"})
-		w.Write(json)
+		response(w, http.StatusInternalServerError, infoResponse{Error: "Internal Server Error"})
 		logrus.Printf("connectDB error: %s", err)
 		return
 	}
@@ -121,32 +126,17 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	// Получение рецептов
 	result, err := searchDrinksInfo(db, r.URL.Query())
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(infoResponse{Error: "Internal Server Error"})
-		w.Write(json)
+		response(w, http.StatusInternalServerError, infoResponse{Error: "Internal Server Error"})
 		logrus.Printf("searchDrinksInfo error: %s", err)
 		return
 	}
 
 	// Проверка на наличие рецептов
 	if len(result.Drinks) == 0 {
-		w.WriteHeader(http.StatusNotFound)
-		json, _ := json.Marshal(result)
-		w.Write(json)
+		response(w, http.StatusNotFound, result)
 		return
 	}
 
-	// Перевод в json
-	jsonResp, err := json.Marshal(result)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(infoResponse{Error: "Internal Server Error"})
-		w.Write(json)
-		logrus.Printf("json.Marshal error: %s", err)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonResp)
+	response(w, http.StatusOK, result)
 
 }
