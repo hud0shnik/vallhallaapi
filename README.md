@@ -1,4 +1,6 @@
-# 🦾 VallHalla-api 🥃
+# 🦾 VallHalla-api-vercel-branch 🥃
+
+Branch for deploying on Vercel
 
 <i><b>Valhalla-api</b></i> provides fast access to the database of drink recipes from the game <b>"VA-11 Hall-A: Cyberpunk Bartender Action"</b>
 
