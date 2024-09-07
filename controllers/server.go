@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/hud0shnik/vallhallaapi/api"
+	"github.com/hud0shnik/vallhallaapi/internal/handler"
 )
 
 // Server - структура сервера
@@ -45,8 +45,8 @@ func (s *Server) NewRouter() {
 	router.Use(middleware.Timeout(s.requestTimeout))
 
 	// Маршруты
-	router.Get(s.basePath+"/search", api.Search)
-	router.Get(s.basePath+"/info", api.Info)
+	router.Get(s.basePath+"/search", handler.Search)
+	router.Get(s.basePath+"/info", handler.Info)
 
 	s.router = router
 
