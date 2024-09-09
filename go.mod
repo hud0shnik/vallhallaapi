@@ -12,5 +12,6 @@ require (
 require (
 	github.com/go-chi/chi v1.5.5
 	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/text v0.18.0
 	gopkg.in/yaml.v3 v3.0.1
 )
