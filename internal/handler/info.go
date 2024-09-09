@@ -9,6 +9,8 @@ import (
 	"github.com/hud0shnik/vallhallaapi/internal/storage"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // infoResponse - структура респонса
@@ -35,37 +37,40 @@ type drinkInfo struct {
 // searchDrinksInfo - функция получения информации о коктейле
 func searchDrinksInfo(db *sqlx.DB, values url.Values) (infoResponse, error) {
 
+	// Кейсер для перевода строк в заголовочный регистр (Title Case)
+	titleCaser := cases.Title(language.AmericanEnglish)
+
 	// Начало запроса и слайс параметров
 	query := "SELECT name, price, alcoholic, ice, flavour, primary_type, secondary_type, recipe, shortcut, description FROM drinks"
 	parameters := []string{}
 
 	// Проверки на наличие параметров и запись их в слайс
 	if values.Has("name") {
-		parameters = append(parameters, "(name LIKE '%"+strings.Title(values.Get("name"))+"%' OR name LIKE '%"+values.Get("name")+"%')")
+		parameters = append(parameters, "(name LIKE '%"+titleCaser.String(values.Get("name"))+"%' OR name LIKE '%"+values.Get("name")+"%')")
 	}
 	if values.Has("price") {
 		parameters = append(parameters, "price = "+values.Get("price"))
 	}
 	if values.Has("alcoholic") {
-		parameters = append(parameters, "alcoholic = '"+strings.Title(values.Get("alcoholic"))+"'")
+		parameters = append(parameters, "alcoholic = '"+titleCaser.String(values.Get("alcoholic"))+"'")
 	}
 	if values.Has("ice") {
-		parameters = append(parameters, "ice = '"+strings.Title(values.Get("ice"))+"'")
+		parameters = append(parameters, "ice = '"+titleCaser.String(values.Get("ice"))+"'")
 	}
 	if values.Has("flavour") {
-		parameters = append(parameters, "flavour = '"+strings.Title(values.Get("flavour"))+"'")
+		parameters = append(parameters, "flavour = '"+titleCaser.String(values.Get("flavour"))+"'")
 	}
 	if values.Has("type") {
-		parameters = append(parameters, "(primary_type = '"+strings.Title(values.Get("type"))+"' OR secondary_type = '"+strings.Title(values.Get("type"))+"')")
+		parameters = append(parameters, "(primary_type = '"+titleCaser.String(values.Get("type"))+"' OR secondary_type = '"+titleCaser.String(values.Get("type"))+"')")
 	}
 	if values.Has("recipe") {
-		parameters = append(parameters, "(recipe LIKE '%"+strings.Title(values.Get("recipe"))+"%' OR recipe LIKE '%"+values.Get("recipe")+"%')")
+		parameters = append(parameters, "(recipe LIKE '%"+titleCaser.String(values.Get("recipe"))+"%' OR recipe LIKE '%"+values.Get("recipe")+"%')")
 	}
 	if values.Has("shortcut") {
-		parameters = append(parameters, "(shortcut LIKE '%"+strings.Title(values.Get("shortcut"))+"%' OR shortcut LIKE '%"+values.Get("shortcut")+"%')")
+		parameters = append(parameters, "(shortcut LIKE '%"+titleCaser.String(values.Get("shortcut"))+"%' OR shortcut LIKE '%"+values.Get("shortcut")+"%')")
 	}
 	if values.Has("description") {
-		parameters = append(parameters, "(description LIKE '%"+strings.Title(values.Get("description"))+"%' OR description LIKE '%"+values.Get("description")+"%')")
+		parameters = append(parameters, "(description LIKE '%"+titleCaser.String(values.Get("description"))+"%' OR description LIKE '%"+values.Get("description")+"%')")
 	}
 
 	// Если есть параметры, передача их в запрос
