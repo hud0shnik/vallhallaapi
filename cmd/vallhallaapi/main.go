@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/hud0shnik/vallhallaapi/internal/controller"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
@@ -34,8 +35,9 @@ func configure(fileName string) (*config, error) {
 
 func main() {
 
-	// Получение пути до конфига
+	// Получение пути до конфига и .env файла
 	var configPath = flag.String("config", "config.yaml", "config path")
+	var dotEnvPath = flag.String("env", ".env", ".env file path")
 	flag.Parse()
 
 	// Настройка логгера
@@ -49,6 +51,9 @@ func main() {
 	if err != nil {
 		logrus.WithError(err).Fatal("can't read config")
 	}
+
+	// Получение значений переменных окружения из .env файла
+	godotenv.Load(*dotEnvPath)
 
 	// Вывод времени начала работы
 	logrus.Printf("API Starts at %s port", config.Server.ServerPort)
