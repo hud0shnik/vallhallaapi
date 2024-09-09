@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/hud0shnik/vallhallaapi/storage"
+	"github.com/hud0shnik/vallhallaapi/internal/storage"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 )

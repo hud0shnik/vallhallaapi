@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/hud0shnik/vallhallaapi/storage"
+	"github.com/hud0shnik/vallhallaapi/internal/storage"
 	"github.com/joho/godotenv"
 )
 
